@@ -25,15 +25,10 @@ Set::Set(int n) : Set{} // call default constructor
 // Constructor to create a Set from a sorted vector v, //O(n)
 Set::Set(const std::vector<int>& v) : Set{} { 
 	//insert all elements of v into the set, backwards
-	//for (int i  = v.size() - 1; i >= 0; i--) {
-	//	insert_node(head,v[i]);
-	//}
-	
+
 	for(auto i = v.rbegin(); i != v.rend(); ++i) {
 		insert_node(head,*i);
 	}
-	
-	
 	
 }
 
@@ -124,16 +119,16 @@ bool Set::less_than(const Set& b) const {
 	Node* S1 = head->next;
 	Node* S2 = b.head->next;
 
-	while (S1 != this->tail && S2 != b.tail) {
+	while (S1 != tail && S2 != b.tail) {
 		if (S1->value < S2->value) {
 			return  false;
 		}
 
-		if (S1->value == S2->value) {
-			S1 = S1->next;
+		if (S1->value > S2->value) {
 			S2 = S2->next;
 		}
 		else {
+			S1 = S1->next;
 			S2 = S2->next;
 		}
 	}
