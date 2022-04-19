@@ -25,9 +25,16 @@ Set::Set(int n) : Set{} // call default constructor
 // Constructor to create a Set from a sorted vector v, //O(n)
 Set::Set(const std::vector<int>& v) : Set{} { 
 	//insert all elements of v into the set, backwards
-	for (int i = v.size() - 1; i >= 0; i--) {
-		insert_node(head,v[i]);
+	//for (int i  = v.size() - 1; i >= 0; i--) {
+	//	insert_node(head,v[i]);
+	//}
+	
+	for(auto i = v.rbegin(); i != v.rend(); ++i) {
+		insert_node(head,*i);
 	}
+	
+	
+	
 }
 
 // Make the set empty, O(n)
@@ -114,17 +121,24 @@ bool Set::less_than(const Set& b) const {
     //worst case O(n)
 	//space O(1)
 
-    Node* rhs = head->next;
+	Node* S1 = head->next;
+	Node* S2 = b.head->next;
 
-    while (rhs != tail) {
-        if (!(b.is_member(rhs->value))) {
-            return false;
-        }
-        rhs = rhs->next;
+	while (S1 != this->tail && S2 != b.tail) {
+		if (S1->value < S2->value) {
+			return  false;
+		}
 
-    }
+		if (S1->value == S2->value) {
+			S1 = S1->next;
+			S2 = S2->next;
+		}
+		else {
+			S2 = S2->next;
+		}
+	}
 
-    return true;  
+	return S1 == tail;
 }
 
 // Modify *this such that it becomes the union of *this with Set S
@@ -147,10 +161,10 @@ Set& Set::operator+=(const Set& S) {
 		} else if (sPtr->value == thisPtr->next->value) {
 			
 			sPtr = sPtr->next;
-		} 
+		} else {
 		
 		thisPtr = thisPtr->next;
-		
+		}
 	} 
 	
 	return *this;
