@@ -84,7 +84,7 @@ int main() {
 
         std::string tmp{os.str()};
         
-        std::cout << tmp;
+        //std::cout << tmp;
         assert((tmp == std::string{"{ 1 3 5 } { 1 3 5 }"}));
     }
 
@@ -208,21 +208,21 @@ int main() {
         Set S2{A2};
 
         S1 += S2;
-        std::cout << " PRE-UNION S1: " << S1 << " PRE-UNION S2: " << S2 << std::endl;
+        //std::cout << " PRE-UNION S1: " << S1 << " PRE-UNION S2: " << S2 << std::endl;
         assert(Set::get_count_nodes() == 13);
 
-        std::cout << " UNION S1: " << S1 << " UNION S2: " << S2 << std::endl;
+        //std::cout << " UNION S1: " << S1 << " UNION S2: " << S2 << std::endl;
 
         S2 *= S2;
         assert(Set::get_count_nodes() == 13);
 
-        std::cout << " intersected S2: " << S2 << std::endl;
+        //std::cout << " intersected S2: " << S2 << std::endl;
 
         // Test
         std::vector<int> A3{1, 2, 3, 5, 7, 8};
         assert(S1 == Set{A3});
         assert(S2 == S2);
-        std::cout << " PRE-DIFF S1: " << S1 << " PRE-DIFF S2: " << S2 << std::endl;
+        //std::cout << " PRE-DIFF S1: " << S1 << " PRE-DIFF S2: " << S2 << std::endl;
         S1 -= S1;
         assert(S1.is_empty());
 
@@ -245,18 +245,18 @@ int main() {
         Set S1{A1};
         Set S2{A2};
         Set S3{};
-        std::cout << " S3: " << S3 << std::endl;
+        //std::cout << " S3: " << S3 << std::endl;
         S3 = S1 + S2;
-        std::cout << " UNION S3: " << S3 << std::endl;
+        //std::cout << " UNION S3: " << S3 << std::endl;
         assert(Set::get_count_nodes() == 19);
 
         // test
         std::vector<int> A3{1, 2, 3, 5, 7, 8};
 		
         assert(S3 == Set{A3});
-        std::cout << " PRE INTERSECT S3: " << S3 << std::endl;
+        //std::cout << " PRE INTERSECT S3: " << S3 << std::endl;
         S3 = S1 * S2;
-        std::cout << " INTERSECT S3: " << S3 << std::endl;
+        //std::cout << " INTERSECT S3: " << S3 << std::endl;
         assert(Set::get_count_nodes() == 14);
 
         // test
@@ -306,7 +306,6 @@ int main() {
     }
 
     assert(Set::get_count_nodes() == 0);
-
+    _CrtDumpMemoryLeaks();
     std::cout << "Success!!\n";
-	_CrtDumpMemoryLeaks();
 }
