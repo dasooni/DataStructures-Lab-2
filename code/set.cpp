@@ -16,9 +16,9 @@ int Set::get_count_nodes() {
 // Default constructor, O(1) (assigning 0 to the data member)
 Set::Set() : head{ new Node() }, tail{ new Node(0,nullptr,head) }, counter{ 0 } { head->next = tail; }
 
-// Conversion constructor, O(1)
-Set::Set(int n) : Set{} {  
-	//insert n into the set, head?
+// Conversion constructor, insert at head, O(1)
+Set::Set(int n) : Set{} // call default constructor 
+{
     insert_node(head,n);
 }
 
@@ -30,12 +30,14 @@ Set::Set(const std::vector<int>& v) : Set{} {
 	}
 }
 
-// Make the set empty
+// Make the set empty, O(n)
 void Set::make_empty() {
     Node* p = head->next;
 
+	//the loop is O(n)
     while (p->next) {
         Node* pNext = p->next;
+		//remove function is O(1)
         remove_node(p);
         p = pNext;
     }
@@ -43,9 +45,10 @@ void Set::make_empty() {
 
 // Destructor
 Set::~Set() {
+	// O(n) , see above. 
     make_empty();
-	delete head;
-	delete tail;
+	delete head; //deallocate, O(1)
+	delete tail; //deallocate, O(1)
     head = nullptr;
 	tail = nullptr;
 }
@@ -66,17 +69,23 @@ Set::Set(const Set& source) : Set{} {  // create an empty list
 
 // Copy-and-swap assignment operator
 Set& Set::operator=(Set source) {
-    
-    std::swap(head, source.head);
-	std::swap(tail, source.tail);
-	std::swap(counter, source.counter);
+	
+	// O(1)
+	if (this == &source) {
+		return *this;
+	}
+    std::swap(head, source.head); // swap the head pointers, O(1)
+	std::swap(tail, source.tail); // swap the tail pointers, O(1)
+	std::swap(counter, source.counter); // swap the counter, O(1)
 
     return *this;
 }
 
 // Test set membership
 bool Set::is_member(int val) const {
-
+	// worst case: O(n)
+	// best case: O(1)
+	// space : O(1)
     Node* temp = head->next;
 	while (temp != tail) {
 		if (temp->value == val) {
@@ -103,6 +112,7 @@ size_t Set::cardinality() const {
 bool Set::less_than(const Set& b) const {
     //best case O(1)
     //worst case O(n)
+	//space O(1)
 
     Node* rhs = head->next;
 
@@ -122,29 +132,11 @@ bool Set::less_than(const Set& b) const {
 Set& Set::operator+=(const Set& S) {
     // Best case: O(1)
     // Worst case: O(n) 
+	// Space: O(n)
 
     Node* thisPtr = head;
     Node* sPtr = S.head->next;
 
-	//while (thisPtr != tail && sPtr != S.tail) {
-	//	if (thisPtr->value > sPtr->value) {
-	//		insert_node(thisPtr, sPtr->value);
-	//		sPtr = sPtr->next;
-	//	} else if (thisPtr->value < sPtr->value) {
-	//		thisPtr = thisPtr->next;
-	//	} else {
-	//		thisPtr = thisPtr->next;
-	//		sPtr = sPtr->next;
-	//	}
-	//}
-
-	//while (sPtr != S.tail) {
-	//	insert_node(thisPtr, sPtr->value);
-	//	sPtr = sPtr->next;
-	//}
-
-	//return *this;
-	
 	while (sPtr != S.tail) {
 		
 		if(sPtr->value < thisPtr -> next -> value || thisPtr ->next == tail) {
@@ -156,7 +148,7 @@ Set& Set::operator+=(const Set& S) {
 			
 			sPtr = sPtr->next;
 		} 
-
+		
 		thisPtr = thisPtr->next;
 		
 	} 
@@ -176,18 +168,18 @@ Set& Set::operator*=(const Set& S) {
 	Node* S1 = head;
 	Node* S2 = S.head;
 	
-	while (S1->next != tail && S2->next != S.tail) {
+	while (S1->next != tail && S2->next != S.tail) { // O(S1+S2)
 		if (S1->next->value == S2->next->value ) {
 			S1 = S1->next;
 			S2 = S2->next;
 			
-		} else if (S1->next->value < S2->next->value) {
+		} else if (S1->next->value < S2->next->value) {   // if S1 < S2, remove the value from S1.
 			remove_node(S1->next);
-			S1 = S1->next;
+			S1 = S1->next; // advance the smaller set.
 			
 		} else {
-			remove_node(S1->next);
-			S2 = S2->next;
+			remove_node(S1->next); // if S1 > S2, remove the value from S1.
+			S2 = S2->next; // advance the smaller set.
 			
 		}
 	}
@@ -203,16 +195,16 @@ Set& Set::operator-=(const Set& S) {
     Node* S1 = head;
     Node* S2 = S.head;
 	
-	while (S1 -> next != tail && S2->next != S.tail) {
+	while (S1 -> next != tail && S2->next != S.tail) { // O(S1+S2)
 		
-        if (S1->next->value < S2->next->value) {
+        if (S1->next->value < S2->next->value) { // if S1 < S2, value does not exist in S1.
 			S1 = S1->next;
 			
-		} else if (S1->next->value == S2->next->value) {
+		} else if (S1->next->value == S2->next->value) { // if S1 == S2, remove the value from S1.
 			remove_node(S1->next);
 			
 		} else {
-			S2 = S2->next;
+			S2 = S2->next; // if S1 > S2, value does not exist in S2.
         }
 	}
 	return *this;
@@ -257,11 +249,8 @@ void Set::remove_node(Node* p) {
 		return;
 	}
 	
-    if (p && p->next && p ->prev) {
-        p->prev->next = p->next;
-        p->next->prev = p->prev;
-        delete p;
-        --counter;
-    }
-	
+	p->prev->next = p->next;
+	p->next->prev = p->prev;
+	delete p;
+	--counter;
 }
