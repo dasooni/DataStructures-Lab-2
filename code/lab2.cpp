@@ -3,6 +3,8 @@
 #include <sstream>
 #include <cassert>
 
+#include <crtdbg.h>
+
 #include "set.h"
 
 int main() {
@@ -306,4 +308,5 @@ int main() {
     assert(Set::get_count_nodes() == 0);
 
     std::cout << "Success!!\n";
+	_CrtDumpMemoryLeaks();
 }
